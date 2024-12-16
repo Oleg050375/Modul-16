@@ -37,19 +37,21 @@ async def add_user(username: str, age: int) -> str:
 
 
 @srv.put('/user/{user_id}/{username}/{age}')  # хаэндлер обработки запроса на изменение записи
-async def ex_user(user_id: int, username: str, age: int) -> str:
+async def ex_user(user_id: int, username: str, age: int) -> User:
     try:
         flag = 0
+        a = None
         for i in users:  # цикл перебора записей
             if i.id == user_id:  # сравнение/поиск id
                 i.username = username  # изменение имени пользователя
                 i.age = age  # изменение возраста пользователя
                 flag = 1
+                a = i
                 break  # выход из цикла
             else:
                 continue
         if flag == 1:
-            return f'The user {user_id} is updated.'
+            return a
         else:
             return f'The user {user_id} not found.'
     except IndexError:
@@ -57,19 +59,20 @@ async def ex_user(user_id: int, username: str, age: int) -> str:
 
 
 @srv.delete('/user/{user_id}')  # хаэндлер обработки запроса на удаление записи
-async def del_user(user_id: int) -> str:
+async def del_user(user_id: int) -> User:
     try:
         flag = 0
         cnt = 0  # счётчик
+        a = None
         for i in users:  # цикл перебора записей
             if i.id == user_id:  # сравнение/поиск id
-                users.pop(cnt)  # удаление записи
+                a = users.pop(cnt)  # удаление записи
                 flag = 1
                 break  # выход из цикла
             else:
                 cnt = cnt + 1  # инкремент счётчика
         if flag == 1:
-            return f'The user {user_id} is deleted.'
+            return a
         else:
             return f'The user {user_id} not found.'
     except IndexError:
