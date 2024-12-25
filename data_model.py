@@ -21,7 +21,7 @@ async def list_answer() -> list:
 
 
 @srv.post('/user/{username}/{age}')  # хаэндлер обработки запроса на создание нового пользователя
-async def add_user(username: str, age: int) -> str:
+async def add_user(username: str, age: int) -> User:
     id_list = []  # список всех id
     for i in users:  # цикл наполнения списка всех id
         id_list.append(i.id)
@@ -30,8 +30,9 @@ async def add_user(username: str, age: int) -> str:
     else:
         new_id = max(id_list) + 1  # определение id следующего пользователя
     try:
-        users.append(User(id=new_id, username=username, age=age))  # добавление записи в список пользователей
-        return f'User {new_id} is registered.'
+        a = User(id=new_id, username=username, age=age)  # формирование объекта новой записи
+        users.append(a)  # добавление записи в список пользователей
+        return a  # возврат объекта новой записи
     except IndexError:
         raise HTTPException(status_code=404, detail='Ошибка формата данных')
 
@@ -51,7 +52,7 @@ async def ex_user(user_id: int, username: str, age: int) -> User:
             else:
                 continue
         if flag == 1:
-            return a
+            return a  # возврат объекта изменённой записи
         else:
             return f'The user {user_id} not found.'
     except IndexError:
@@ -72,7 +73,7 @@ async def del_user(user_id: int) -> User:
             else:
                 cnt = cnt + 1  # инкремент счётчика
         if flag == 1:
-            return a
+            return a  # возврат объекта удалённой записи
         else:
             return f'The user {user_id} not found.'
     except IndexError:
