@@ -10,9 +10,9 @@ users = []  # список пользователей
 
 
 class User(BaseModel):  # класс данных пользователя
-    id: Annotated[int, Path(ge=1, le=100, description='Enter User ID')]
-    username: Annotated[str, Path(min_length=5, max_length=20, description='Enter Username')]
-    age: Annotated[int, Path(ge=18, le=120, description='Enter age')]
+    id: int
+    username: str
+    age: int
 
 
 @srv.get('/users')  # хэндлер обработки запроса списка пользователей
@@ -21,7 +21,9 @@ async def list_answer() -> list:
 
 
 @srv.post('/user/{username}/{age}')  # хаэндлер обработки запроса на создание нового пользователя
-async def add_user(username: str, age: int) -> User:
+async def add_user(
+        username: Annotated[str, Path(min_length=5, max_length=20, description='Enter Username', example='Svetlana')],
+        age: Annotated[int, Path(ge=18, le=120, description='Enter age', example='35')]) -> User:
     id_list = []  # список всех id
     for i in users:  # цикл наполнения списка всех id
         id_list.append(i.id)
@@ -38,7 +40,10 @@ async def add_user(username: str, age: int) -> User:
 
 
 @srv.put('/user/{user_id}/{username}/{age}')  # хаэндлер обработки запроса на изменение записи
-async def ex_user(user_id: int, username: str, age: int) -> User:
+async def ex_user(user_id: Annotated[int, Path(ge=1, le=100, description='Enter User ID', example='5')],
+                  username: Annotated[
+                      str, Path(min_length=5, max_length=20, description='Enter Username', example='Svetlana')],
+                  age: Annotated[int, Path(ge=18, le=120, description='Enter age', example='35')]) -> User:
     try:
         flag = 0
         a = None
@@ -60,7 +65,7 @@ async def ex_user(user_id: int, username: str, age: int) -> User:
 
 
 @srv.delete('/user/{user_id}')  # хаэндлер обработки запроса на удаление записи
-async def del_user(user_id: int) -> User:
+async def del_user(user_id: Annotated[int, Path(ge=1, le=100, description='Enter User ID', example='5')]) -> User:
     try:
         flag = 0
         cnt = 0  # счётчик
